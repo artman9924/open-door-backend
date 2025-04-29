@@ -53,3 +53,8 @@ def post_message():
     conn.close()
 
     return jsonify({'status': 'Message saved successfully!'})
+
+@app.route('/force-init')
+def force_init():
+    init_db()
+    return "Database initialized (or already existed)."
