@@ -17,7 +17,7 @@ def init_db():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             content TEXT NOT NULL,
             timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
-        )
+        );
     ''')
     conn.commit()
     conn.close()
