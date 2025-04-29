@@ -1,9 +1,10 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import sqlite3
+import os
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS
+CORS(app)
 
 def get_db_connection():
     conn = sqlite3.connect('database.db')
@@ -21,6 +22,13 @@ def init_db():
     ''')
     conn.commit()
     conn.close()
+
+# Ensure database is initialized on first import
+if not os.path.exists('database.db'):
+    print("Database not found. Initializing database...")
+    init_db()
+else:
+    print("Database already exists.")
 
 
 @app.route('/post-message', methods=['POST'])
@@ -45,7 +53,6 @@ def get_messages():
     conn = get_db_connection()
     messages = conn.execute('SELECT * FROM messages ORDER BY timestamp DESC').fetchall()
     conn.close()
-
     return jsonify([dict(msg) for msg in messages])
 
 if __name__ == '__main__':
