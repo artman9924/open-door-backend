@@ -38,7 +38,7 @@ function submitMessage() {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ message: message }),
+    body: JSON.stringify({ content: message }),
   })
     .then((response) => response.json())
     .then((data) => {
