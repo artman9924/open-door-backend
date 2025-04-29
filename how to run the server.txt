@@ -1,0 +1,84 @@
+Good question — let's make it super clear so you're never stuck on this again! 🧠✨
+
+Running your server = running your `backend/app.py`.
+
+Here's exactly how you restart it step-by-step:
+
+---
+
+# 🛠 How to Run Your Flask Server (Simple Version)
+
+1. **Open VS Code** (or your code editor you're using).
+2. **Open a Terminal** (Terminal → New Terminal) inside VS Code.
+
+✅ Make sure you see something like this at the bottom:
+```
+PS C:\Users\artman\Desktop\open-door\backend>
+```
+
+*(You want to be inside the `backend/` folder where `app.py` lives.)*
+
+---
+
+3. **Run this command:**
+
+```bash
+python app.py
+```
+
+✅ If everything works, you’ll see:
+
+```
+* Running on http://127.0.0.1:5000/
+* Press CTRL+C to quit
+```
+
+That means your server is *alive* and waiting for your frontend to connect! 🚀
+
+---
+
+# 📜 Important Notes
+
+- If you already had an old terminal window open where the server was running, **make sure you stopped it first** (press `Ctrl+C` inside that terminal).
+- Then run `python app.py` again.
+
+✅ You always want to have **only one server running at a time**.
+
+---
+
+# 🎯 Quick Shortcut Checklist:
+| Action | Command |
+|:-------|:--------|
+| Go to backend folder | `cd C:\Users\artman\Desktop\open-door\backend` |
+| Start server | `python app.py` |
+| Stop server | `Ctrl+C` |
+| Start again after editing | `python app.py` |
+
+---
+
+# 🧡 Why You Have to Run the Server
+
+Because your **frontend (index.html)** sends **requests** to your **backend**.  
+If the server isn’t running, the frontend won’t be able to send or fetch anything.
+
+---
+
+# 🚀 So Right Now:
+
+👉 Open Terminal in VS Code  
+👉 Go to `backend/` if needed  
+👉 Run:
+
+```bash
+python app.py
+```
+
+✅ Then keep that window open (don't close it).  
+✅ Now you can test your frontend "Read Messages" feature!
+
+---
+
+You want to try starting your server now and tell me if it runs successfully? 🎯  
+(If there's any error or message, just copy/paste it here and I’ll help instantly.)  
+
+You're about to see **Open Door come fully alive!** 🚀✨
