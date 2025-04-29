@@ -30,10 +30,16 @@ if not os.path.exists('database.db'):
 else:
     print("Database already exists.")
 
+@app.route('/get-messages', methods=['GET'])
+def get_messages():
+    conn = get_db_connection()
+    messages = conn.execute('SELECT * FROM messages ORDER BY timestamp DESC').fetchall()
+    conn.close()
+    return jsonify([dict(msg) for msg in messages])
 
 @app.route('/post-message', methods=['POST'])
 def post_message():
-    data = request.get_json()
+    data = request.get_json
     message = data.get('message', '')
 
     print(f"Received message: {message}")  # Print to confirm backend is receiving
@@ -47,14 +53,3 @@ def post_message():
     conn.close()
 
     return jsonify({'status': 'Message saved successfully!'})
-
-@app.route('/get-messages', methods=['GET'])
-def get_messages():
-    conn = get_db_connection()
-    messages = conn.execute('SELECT * FROM messages ORDER BY timestamp DESC').fetchall()
-    conn.close()
-    return jsonify([dict(msg) for msg in messages])
-
-if __name__ == '__main__':
-    init_db()
-    app.run(host='0.0.0.0', port=5000, debug=True)
