@@ -1,0 +1,10 @@
+git add .
+git commit -m "Fix deployment issues"
+git push
+
+or
+
+(add the right files)
+git add requirements.txt
+git commit -m "Fix: remove unsupported packages from requirements"
+git push
