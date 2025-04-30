@@ -69,12 +69,13 @@ def post_message():
     flagged = any(word in message.lower() for word in MODERATION_KEYWORDS)
 
     print(f"Message received: '{message}' | Flagged: {flagged}")
-
-    conn = get_db_connection()
-    conn.execute('INSERT INTO messages (content, flagged) VALUES (?, ?)', (message, int(flagged)))
-    conn.commit()
-    conn.close()
-
+    try:
+        conn = get_db_connection()
+        conn.execute('INSERT INTO messages (content, flagged) VALUES (?, ?)', (message, int(flagged)))
+        conn.commit()
+        conn.close()
+    except Exception as e:
+        print("Error in post_message:", str(e))  # Shows in Render logs
     return jsonify({'status': 'Message saved successfully!', 'flagged': flagged})
 
 ADMIN_KEY = os.getenv("ADMIN_KEY")
