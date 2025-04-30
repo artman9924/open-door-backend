@@ -5,7 +5,6 @@ load_dotenv()
 import sqlite3
 import os
 
-ADMIN_KEY = os.getenv("ADMIN_KEY")
 app = Flask(__name__)
 CORS(app)
 
@@ -56,6 +55,8 @@ def post_message():
     conn.close()
 
     return jsonify({'status': 'Message saved successfully!'})
+
+ADMIN_KEY = os.getenv("ADMIN_KEY")
 
 @app.route('/admin')
 def admin_panel():
