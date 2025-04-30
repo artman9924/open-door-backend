@@ -25,12 +25,25 @@ def init_db():
     conn.commit()
     conn.close()
 
+def add_flagged_column():
+    conn = get_db_connection()
+    try:
+        conn.execute('ALTER TABLE messages ADD COLUMN flagged INTEGER DEFAULT 0')
+        print("Added 'flagged' column to messages table.")
+    except sqlite3.OperationalError:
+        print("'flagged' column already exists.")
+    conn.commit()
+    conn.close()
+
 # Ensure database is initialized on first import
 if not os.path.exists('database.db'):
     print("Database not found. Initializing database...")
     init_db()
+    add_flagged_column()
 else:
     print("Database already exists.")
+    add_flagged_column()
+
 
 @app.route('/get-messages', methods=['GET'])
 def get_messages():
@@ -39,22 +52,30 @@ def get_messages():
     conn.close()
     return jsonify([dict(msg) for msg in messages])
 
+MODERATION_KEYWORDS = ['suicide', 'kill', 'abuse', 'hate', 'die', 'harm']
+
 @app.route('/post-message', methods=['POST'])
 def post_message():
     data = request.get_json()
-    message = data.get('content', '')
+    message = data.get('content', '').strip()
 
-    print(f"Received message: {message}") # Log to Render
+    print(f"Message received: '{message}' | Flagged: {flagged}")
+ # Log to Render
 
     if not message:
         return jsonify({'error': 'No message provided.'}), 400
+    
+    # Soft moderation check
+    flagged = any(word in message.lower() for word in MODERATION_KEYWORDS)
+
+    print(f"Message received: '{message}' | Flagged: {flagged}")
 
     conn = get_db_connection()
-    conn.execute('INSERT INTO messages (content) VALUES (?)', (message,))
+    conn.execute('INSERT INTO messages (content, flagged) VALUES (?, ?)', (message, int(flagged)))
     conn.commit()
     conn.close()
 
-    return jsonify({'status': 'Message saved successfully!'})
+    return jsonify({'status': 'Message saved successfully!', 'flagged': flagged})
 
 ADMIN_KEY = os.getenv("ADMIN_KEY")
 
@@ -69,16 +90,34 @@ def admin_panel():
     conn.close()
 
     html = "<h1>Open Door Admin Panel</h1><ul>"
+
+    if not messages:
+        html += "<p>No messages to show.</p>"
+    else:
+        html += "<ul>"
     for msg in messages:
+        flagged = int(msg['flagged']) if msg['flagged'] is not None else 0
+        flagged_style = "color: red; font-weight: bold;" if flagged == 1 else ""
+        
+        # Conditionally show the "FLAGGED" badge
+        flagged_badge = (
+            '<span style="background: #fdd; color: #900; padding: 2px 6px; border-radius: 6px; margin-right: 8px;">FLAGGED</span>'
+            if flagged == 1 else ''
+        )
+        
         html += f"""
         <li>
-            <strong>#{msg['id']}</strong> — {msg['content']} <em>({msg['timestamp']})</em>
+            {flagged_badge}
+            <span style="{flagged_style}"><strong>#{msg['id']}</strong> — {msg['content']}</span>
+            <em>({msg['timestamp']})</em>
             <form method="POST" action="/delete-message/{msg['id']}?key={key}" style="display:inline;">
                 <button type="submit">Delete</button>
             </form>
         </li>
         """
-    html += "</ul>"
+
+        html += "</ul>"
+
     return html
 
 @app.route('/delete-message/<int:msg_id>', methods=['POST'])
