@@ -59,24 +59,25 @@ def post_message():
     data = request.get_json()
     message = data.get('content', '').strip()
 
-    print(f"Message received: '{message}' | Flagged: {flagged}")
- # Log to Render
-
     if not message:
         return jsonify({'error': 'No message provided.'}), 400
-    
-    # Soft moderation check
+
+    # ✅ Define flagged only if message is valid
     flagged = any(word in message.lower() for word in MODERATION_KEYWORDS)
 
-    print(f"Message received: '{message}' | Flagged: {flagged}")
     try:
         conn = get_db_connection()
         conn.execute('INSERT INTO messages (content, flagged) VALUES (?, ?)', (message, int(flagged)))
         conn.commit()
         conn.close()
+
+        print(f"Message received: '{message}' | Flagged: {flagged}") 
+
+        return jsonify({'status': 'Message saved successfully!', 'flagged': flagged})
     except Exception as e:
-        print("Error in post_message:", str(e))  # Shows in Render logs
-    return jsonify({'status': 'Message saved successfully!', 'flagged': flagged})
+        print("Error in post_message:", str(e))
+        return jsonify({'error': 'Server error occurred'}), 500
+
 
 ADMIN_KEY = os.getenv("ADMIN_KEY")
 
