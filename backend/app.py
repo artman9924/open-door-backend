@@ -39,10 +39,10 @@ def get_messages():
 
 @app.route('/post-message', methods=['POST'])
 def post_message():
-    data = request.get_json
-    message = data.get('message', '')
+    data = request.get_json()
+    message = data.get('content', '')
 
-    print(f"Received message: {message}")  # Print to confirm backend is receiving
+    print(f"Received message: {message}") # Log to Render
 
     if not message:
         return jsonify({'error': 'No message provided.'}), 400
