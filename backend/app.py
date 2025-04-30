@@ -1,8 +1,11 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, redirect
 from flask_cors import CORS
+from dotenv import load_dotenv
+load_dotenv()
 import sqlite3
 import os
 
+ADMIN_KEY = os.getenv("ADMIN_KEY")
 app = Flask(__name__)
 CORS(app)
 
@@ -54,3 +57,38 @@ def post_message():
 
     return jsonify({'status': 'Message saved successfully!'})
 
+@app.route('/admin')
+def admin_panel():
+    key = request.args.get('key')
+    if key != ADMIN_KEY:
+        return "Unauthorized", 403
+
+    conn = get_db_connection()
+    messages = conn.execute('SELECT * FROM messages ORDER BY timestamp DESC').fetchall()
+    conn.close()
+
+    html = "<h1>Open Door Admin Panel</h1><ul>"
+    for msg in messages:
+        html += f"""
+        <li>
+            <strong>#{msg['id']}</strong> — {msg['content']} <em>({msg['timestamp']})</em>
+            <form method="POST" action="/delete-message/{msg['id']}?key={key}" style="display:inline;">
+                <button type="submit">Delete</button>
+            </form>
+        </li>
+        """
+    html += "</ul>"
+    return html
+
+@app.route('/delete-message/<int:msg_id>', methods=['POST'])
+def delete_message(msg_id):
+    key = request.args.get('key')
+    if key != ADMIN_KEY:
+        return "Unauthorized", 403
+
+    conn = get_db_connection()
+    conn.execute('DELETE FROM messages WHERE id = ?', (msg_id,))
+    conn.commit()
+    conn.close()
+
+    return redirect(f"/admin?key={key}")
