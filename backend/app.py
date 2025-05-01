@@ -1,12 +1,26 @@
 from flask import Flask, request, jsonify, redirect
 from flask_cors import CORS
 from dotenv import load_dotenv
+from textblob import TextBlob
 load_dotenv()
 import sqlite3
 import os
 
 app = Flask(__name__)
 CORS(app)
+
+def analyze_emotion(message):
+    polarity = TextBlob(message).sentiment.polarity
+    if polarity > 0.4:
+        return "hopeful"
+    elif polarity > 0.1:
+        return "relieved"
+    elif polarity < -0.4:
+        return "angry"
+    elif polarity < -0.1:
+        return "sad"
+    else:
+        return "neutral"
 
 def get_db_connection():
     conn = sqlite3.connect('database.db')
@@ -58,6 +72,7 @@ MODERATION_KEYWORDS = ['suicide', 'kill', 'abuse', 'hate', 'die', 'harm']
 def post_message():
     data = request.get_json()
     message = data.get('content', '').strip()
+    emotion = analyze_emotion(message)
 
     if not message:
         return jsonify({'error': 'No message provided.'}), 400
@@ -67,7 +82,7 @@ def post_message():
 
     try:
         conn = get_db_connection()
-        conn.execute('INSERT INTO messages (content, flagged) VALUES (?, ?)', (message, int(flagged)))
+        conn.execute('INSERT INTO messages (content, flagged) VALUES (?, ?, ?)', (message, int(flagged), emotion))
         conn.commit()
         conn.close()
 
@@ -107,10 +122,13 @@ def admin_panel():
             if flagged == 1 else ''
         )
         
+        emotion_display = f"<span style='color: #888; font-size: 0.9em;'> [{msg['emotion_tag']}]</span>" if msg['emotion_tag'] else ""
+
         html += f"""
         <li>
             {flagged_badge}
             <span style="{flagged_style}"><strong>#{msg['id']}</strong> — {msg['content']}</span>
+            {emotion_display}
             <em>({msg['timestamp']})</em>
             <form method="POST" action="/delete-message/{msg['id']}?key={key}" style="display:inline;">
                 <button type="submit">Delete</button>
