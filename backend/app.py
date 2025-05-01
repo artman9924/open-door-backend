@@ -40,13 +40,7 @@ def init_db():
     ''')
     conn.commit()
     conn.close()
-    
-# Initialize DB if it doesn't exist
-if not os.path.exists('database.db'):
-    print("Database not found. Initializing database...")
-    init_db()
-else:
-    print("Database already exists.")
+
 
 def add_flagged_column():
     conn = get_db_connection()
@@ -91,7 +85,7 @@ def post_message():
 
     try:
         conn = get_db_connection()
-        conn.execute('INSERT INTO messages (content, flagged) VALUES (?, ?, ?)', (message, int(flagged), emotion))
+        conn.execute('INSERT INTO messages (content, flagged, emotion_tag) VALUES (?, ?, ?)', (message, int(flagged), emotion))
         conn.commit()
         conn.close()
 
