@@ -1,62 +1,97 @@
-# 🚪 Open Door
+🛠️ Open Door — Full-Stack Mental Health Support Platform
 
-📜 Creator's Note
-I created Open Door to build a space where honesty matters more than noise.
-Through this project, I taught myself how to design, develop, and deploy a full-stack web application — from frontend interface to backend database management.
-Along the way, I learned how to troubleshoot real-world deployment issues, refine mobile-first design, and create user experiences focused on emotional presence rather than engagement metrics.
-Open Door reflects my belief that technology should serve real human needs.
-It also represents the beginning of my journey as a developer — someone who builds with intention, care, and a deep respect for the people who use what I create.
+Type: Solo Project · Personal / Portfolio
+Tech Stack: HTML · CSS · JavaScript · Flask · SQLite · Render · Netlify
 
-> _Welcome Home. Speak Freely. Be Heard._
+💡 Overview
+Open Door is an anonymous mental health platform created to give people space to speak freely — especially in their most unheard moments. With no usernames, likes, or followers, it offers a simple space for honesty, presence, and belonging.
 
-![Built with Flask](https://img.shields.io/badge/Built%20With-Flask-blue)
-![Frontend](https://img.shields.io/badge/Frontend-HTML%2FCSS%2FJS-yellow)
-![Database](https://img.shields.io/badge/Database-SQLite-lightgrey)
-![Stage](https://img.shields.io/badge/Stage-MVP-blueviolet)
+🌟 Key Features
+📝 Post & Read Messages — Anonymously share what you’re feeling and read messages from others.
 
----
+    🎨 Minimalist UI — A quiet, clean interface designed for calm emotional presence.
 
-**Open Door** is an anonymous messaging platform built to create **a space for real human expression** — without judgment, likes, or profiles.
+    🔐 Admin Panel (v0.2.2) — Secure backend dashboard to view and delete messages.
 
-In a world that often feels noisy, competitive, and curated, Open Door offers something different:  
-a place to simply **be heard**.
+    🛡️ Soft Moderation (v0.2.3) — Auto-flags potentially harmful content for admin review.
 
-Anyone can:
+    🚀 Live Deployment —
 
-- 📝 **Share a message** from their heart — freely and anonymously.
-- 🌎 **Read** what others have shared — moments of hope, hurt, gratitude, and honesty.
+        Frontend: Hosted on Netlify
 
-No accounts. No followers. No pressure.  
-Just _presence_, _listening_, and _belonging_.
+        Backend & DB: Hosted on Render with full API integration
 
----
+        CI/CD: GitHub-connected with auto-deploy
 
-# ✨ Why Open Door?
+🔧 Technical Highlights
 
-> "You are not alone — even when it feels like it."
+    RESTful Flask API with CORS and structured JSON handling
 
-- A platform for **silent voices**.
-- A reminder that **everyone is carrying something unseen**.
-- A celebration of **raw, authentic presence** over performance.
+    SQLite database with auto-init, timestamps, and content flagging
 
-Built with love — and the belief that small, quiet acts of honesty can change lives. 🌱
+    Secure content moderation with admin-only access
 
----
+    Production-ready error handling and environment configs
 
-# 🚀 Technology Stack
+✨ Motivation
+Open Door was built to explore how emotionally intelligent tech can support real people in quiet ways. It’s not about engagement — it’s about being seen and heard.
 
-| Layer    | Technology                              |
-| :------- | :-------------------------------------- |
-| Frontend | HTML / CSS / JavaScript                 |
-| Backend  | Flask (Python)                          |
-| Database | SQLite                                  |
-| Hosting  | Local (localhost, coming soon to cloud) |
+📜 Creator’s Note
+I created Open Door to design, develop, and deploy a complete full-stack application with intention and care. Through it, I learned:
+
+    Backend/API design and database handling
+
+    Troubleshooting real-world deployment issues
+
+    Building for emotional presence over metrics
+
+    Prioritizing accessibility and purpose in design
+
+This project represents both a tool I believe the world needs — and the start of my journey as a developer who builds for impact.
+
+    Welcome Home. Speak Freely. Be Heard.
+
+Built with Flask Frontend Database Stage
 
 ---
 
 # 📜 Open Door - Patch Notes
 
 ---
+
+## 📦 Changelog
+
+| Version | Date       | Highlights                                                           |
+| ------- | ---------- | -------------------------------------------------------------------- |
+| v0.2.3  | 2025-04-30 | ✅ Soft moderation, flagged content detection, admin panel updates   |
+| v0.2.2  | 2025-04-29 | ✅ Admin tools: message listing, deletion, password key protection   |
+| v0.2.1  | 2025-04-28 | ✅ Stable MVP: post and read messages, deployed frontend and backend |
+
+## 🐞 Debugging Lessons & Fixes (v0.2.3)
+
+Throughout development, several issues were encountered and solved. Below are the key debugging insights:
+
+| Issue                                        | Result                                                   | Lesson                                                                                   |
+| -------------------------------------------- | -------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| Forgot to call `request.get_json()`          | Backend crashed silently when trying to access post data | Always call functions like `get_json()` with parentheses; test APIs with dummy requests. |
+| Frontend pointing to 127.0.0.1 in prod       | Fetch requests failed after deployment                   | Use a `BASE_URL` constant and swap between dev/prod with env flags or build scripts.     |
+| Missing dependency: flask-cors / gunicorn    | Render deployment failed                                 | Maintain a clean `requirements.txt`; only freeze dependencies after local validation.    |
+| 500 Internal Server Error on `/post-message` | Frontend couldn’t parse server response, user saw error  | Use `try/except` around DB inserts and return valid JSON with proper status codes.       |
+| Vim commit editor confusion                  | Stuck in terminal, couldn’t commit                       | Use `git commit -m "..."` or change your default Git editor.                             |
+| All messages showed FLAGGED tag              | Admin UI falsely marked every message as flagged         | Use conditional rendering; cast data safely with `int(x)` and check flags explicitly.    |
+| Logging a variable before defining it        | 500 crash from `UnboundLocalError`                       | Declare and define all variables before using them, especially in logs and responses.    |
+
+## 🛣️ Roadmap
+
+| Version | Planned Features                                                        | Status  |
+| ------- | ----------------------------------------------------------------------- | ------- |
+| v0.2.4  | 🌐 Admin login form (replace ?key=...) with secure login UI             | Planned |
+| v0.2.5  | 📱 Mobile-friendly layout improvements, animation polish                | Planned |
+| v0.2.6  | 📊 Admin stats dashboard (message count, % flagged, time trends)        | Planned |
+| v0.3.0  | 💬 Anonymous replies: allow users to respond to messages                | Planned |
+| v0.3.1  | 🧠 Emotion tagging: auto-label messages by mood using NLP               | Planned |
+| v0.3.2  | 🔍 Filter and search for messages by keywords, flag status, and time    | Planned |
+| v1.0.0  | 🚀 Public launch with branding, onboarding, and long-term hosting setup | Future  |
 
 ## Version: 0.2
 
@@ -151,15 +186,6 @@ _(Initial MVP Release)_
 
 ---
 
-# 🌟 What's Next (Planned)
-
-- Add sorting (Newest → Oldest).
-- Improve UI styling with background visuals and animations.
-- Deploy backend and frontend to a public server (e.g., Render, Railway, Vercel).
-- Add "time ago" formatting (e.g., "5 minutes ago" instead of full timestamp).
-
----
-
 # ✨ Notes
 
 - Open Door represents a commitment to **authentic anonymous expression**.
@@ -178,24 +204,21 @@ _(Initial MVP Release)_
 
 ---
 
-# 🎉 Milestone Unlocked
+🎉 Milestone Unlocked
 
-- First working version live locally ✅
-- Real users can post and read anonymous messages ✅
-- Full-stack communication achieved ✅
+    First working version live locally ✅
+
+    Real users can post and read anonymous messages ✅
+
+    Full-stack communication achieved ✅
+
+    Backend deployed with auto-redeploy on Render ✅
+
+    Admin panel and moderation tools fully functional ✅
 
 ---
 
 ### 🧡 Thank you for being part of building Open Door.
-
----
-
-# 📈 Roadmap
-
-- Sort messages (newest to oldest)
-- Improve message card design
-- Add "posted X minutes ago" formatting
-- Deploy online for real-world use
 
 ---
 
@@ -210,3 +233,11 @@ _(Initial MVP Release)_
 
 Thank you for believing in raw presence.  
 Thank you for building a space the world quietly needs.
+
+---
+
+## 📘 Developer Handbook
+
+For a full reference of key variables, API routes, and database schema, see:
+
+👉 [Download the Open Door Developer Handbook (PDF)](./open-door-dev-handbook.pdf)

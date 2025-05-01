@@ -33,11 +33,20 @@ def init_db():
         CREATE TABLE IF NOT EXISTS messages (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             content TEXT NOT NULL,
-            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+            flagged INTEGER DEFAULT 0,
+            emotion_tag TEXT
         );
     ''')
     conn.commit()
     conn.close()
+    
+# Initialize DB if it doesn't exist
+if not os.path.exists('database.db'):
+    print("Database not found. Initializing database...")
+    init_db()
+else:
+    print("Database already exists.")
 
 def add_flagged_column():
     conn = get_db_connection()
