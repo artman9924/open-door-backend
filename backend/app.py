@@ -115,9 +115,13 @@ def admin_panel():
         html += "<p>No messages to show.</p>"
     else:
         html += "<ul>"
-    for msg in messages:
+    for index, msg in enumerate(messages):
         flagged = int(msg['flagged']) if msg['flagged'] is not None else 0
         flagged_style = "color: red; font-weight: bold;" if flagged == 1 else ""
+        highlight_style = (
+        "background: #e6ffe6; border: 2px solid #28a745; padding: 6px; border-radius: 6px;"
+        if index == 0 else ""
+        )
         
         # Conditionally show the "FLAGGED" badge
         flagged_badge = (
@@ -125,12 +129,19 @@ def admin_panel():
             if flagged == 1 else ''
         )
         
+        newest_label = (
+            '<span style="color: #28a745; font-size: 0.85em; font-weight: bold;">[Newest]</span> '
+            if index == 0 else ""
+        )
+
+
         emotion_display = f"<span style='color: #888; font-size: 0.9em;'> [{msg['emotion_tag']}]</span>" if msg['emotion_tag'] else ""
 
         html += f"""
-        <li>
+        <li style="{highlight_style}">
             {flagged_badge}
             <span style="{flagged_style}"><strong>#{msg['id']}</strong> — {msg['content']}</span>
+            <span style="{flagged_style}">{newest_label}<strong>#{msg['id']}</strong> — {msg['content']}</span>
             {emotion_display}
             <em>({msg['timestamp']})</em>
             <form method="POST" action="/delete-message/{msg['id']}?key={key}" style="display:inline;">
