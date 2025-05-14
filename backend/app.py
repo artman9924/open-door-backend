@@ -5,6 +5,7 @@ from textblob import TextBlob
 load_dotenv()
 import sqlite3
 import os
+import json
 
 app = Flask(__name__)
 CORS(app)
@@ -166,6 +167,8 @@ def admin_panel():
 
     return html
 
+import json
+
 @app.route('/react/<int:msg_id>', methods=['POST'])
 def react_to_message(msg_id):
     data = request.get_json()
@@ -175,11 +178,26 @@ def react_to_message(msg_id):
         return jsonify({"error": "Invalid emoji"}), 400
 
     conn = get_db_connection()
-    conn.execute('UPDATE messages SET reactions = reactions || ? WHERE id = ?', (emoji, msg_id))
+    message = conn.execute('SELECT reactions FROM messages WHERE id = ?', (msg_id,)).fetchone()
+
+    if message is None:
+        conn.close()
+        return jsonify({"error": "Message not found"}), 404
+
+    current_reactions = {}
+    try:
+        current_reactions = json.loads(message['reactions']) if message['reactions'] else {}
+    except json.JSONDecodeError:
+        pass
+
+    current_reactions[emoji] = current_reactions.get(emoji, 0) + 1
+
+    conn.execute('UPDATE messages SET reactions = ? WHERE id = ?', (json.dumps(current_reactions), msg_id))
     conn.commit()
     conn.close()
 
     return jsonify({"status": "Reaction added"})
+
 
 @app.route('/delete-message/<int:msg_id>', methods=['POST'])
 def delete_message(msg_id):
