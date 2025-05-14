@@ -41,6 +41,16 @@ def init_db():
     conn.commit()
     conn.close()
 
+def ensure_reactions_column():
+    conn = get_db_connection()
+    try:
+        conn.execute('ALTER TABLE messages ADD COLUMN reactions TEXT DEFAULT ""')
+        print("Added 'reactions' column to messages table.")
+    except sqlite3.OperationalError:
+        print("'reactions' column already exists.")
+    conn.commit()
+    conn.close()
+
 
 def add_flagged_column():
     conn = get_db_connection()
@@ -153,6 +163,21 @@ def admin_panel():
         html += "</ul>"
 
     return html
+
+@app.route('/react/<int:msg_id>', methods=['POST'])
+def react_to_message(msg_id):
+    data = request.get_json()
+    emoji = data.get('emoji', '')
+
+    if emoji not in ["💛", "🙏", "🌱"]:
+        return jsonify({"error": "Invalid emoji"}), 400
+
+    conn = get_db_connection()
+    conn.execute('UPDATE messages SET reactions = reactions || ? WHERE id = ?', (emoji, msg_id))
+    conn.commit()
+    conn.close()
+
+    return jsonify({"status": "Reaction added"})
 
 @app.route('/delete-message/<int:msg_id>', methods=['POST'])
 def delete_message(msg_id):
