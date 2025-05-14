@@ -71,6 +71,8 @@ else:
     print("Database already exists.")
     add_flagged_column()
 
+ensure_reactions_column()
+
 
 @app.route('/get-messages', methods=['GET'])
 def get_messages():
