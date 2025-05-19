@@ -42,16 +42,6 @@ def init_db():
     conn.commit()
     conn.close()
 
-def ensure_reactions_column():
-    conn = get_db_connection()
-    try:
-        conn.execute('ALTER TABLE messages ADD COLUMN reactions TEXT DEFAULT ""')
-        print("Added 'reactions' column to messages table.")
-    except sqlite3.OperationalError:
-        print("'reactions' column already exists.")
-    conn.commit()
-    conn.close()
-
 
 def add_flagged_column():
     conn = get_db_connection()
@@ -71,8 +61,6 @@ if not os.path.exists('database.db'):
 else:
     print("Database already exists.")
     add_flagged_column()
-
-ensure_reactions_column()
 
 
 @app.route('/get-messages', methods=['GET'])
@@ -168,36 +156,6 @@ def admin_panel():
     return html
 
 import json
-
-@app.route('/react/<int:msg_id>', methods=['POST'])
-def react_to_message(msg_id):
-    data = request.get_json()
-    emoji = data.get('emoji', '')
-
-    if emoji not in ["💛", "🙏", "🌱"]:
-        return jsonify({"error": "Invalid emoji"}), 400
-
-    conn = get_db_connection()
-    message = conn.execute('SELECT reactions FROM messages WHERE id = ?', (msg_id,)).fetchone()
-
-    if message is None:
-        conn.close()
-        return jsonify({"error": "Message not found"}), 404
-
-    current_reactions = {}
-    try:
-        current_reactions = json.loads(message['reactions']) if message['reactions'] else {}
-    except json.JSONDecodeError:
-        pass
-
-    current_reactions[emoji] = current_reactions.get(emoji, 0) + 1
-
-    conn.execute('UPDATE messages SET reactions = ? WHERE id = ?', (json.dumps(current_reactions), msg_id))
-    conn.commit()
-    conn.close()
-
-    return jsonify({"status": "Reaction added"})
-
 
 @app.route('/delete-message/<int:msg_id>', methods=['POST'])
 def delete_message(msg_id):
