@@ -88,7 +88,7 @@ def post_message():
 
     try:
         conn = get_db_connection()
-        conn.execute('INSERT INTO messages (content, flagged, emotion_tag, mood) VALUES (?, ?, ?)', (message, int(flagged), emotion, mood))
+        conn.execute('INSERT INTO messages (content, flagged, emotion_tag, mood) VALUES (?, ?, ?, ?)', (message, int(flagged), emotion, mood))
         conn.commit()
         conn.close()
 
