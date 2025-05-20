@@ -36,7 +36,8 @@ def init_db():
             content TEXT NOT NULL,
             timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
             flagged INTEGER DEFAULT 0,
-            emotion_tag TEXT
+            emotion_tag TEXT,
+            mood TEXT
         );
     ''')
     conn.commit()
@@ -77,6 +78,7 @@ def post_message():
     data = request.get_json()
     message = data.get('content', '').strip()
     emotion = analyze_emotion(message)
+    mood = data.get("mood", None)
 
     if not message:
         return jsonify({'error': 'No message provided.'}), 400
@@ -86,7 +88,7 @@ def post_message():
 
     try:
         conn = get_db_connection()
-        conn.execute('INSERT INTO messages (content, flagged, emotion_tag) VALUES (?, ?, ?)', (message, int(flagged), emotion))
+        conn.execute('INSERT INTO messages (content, flagged, emotion_tag, mood) VALUES (?, ?, ?)', (message, int(flagged), emotion, mood))
         conn.commit()
         conn.close()
 
