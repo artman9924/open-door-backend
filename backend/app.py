@@ -5,16 +5,16 @@ from flask_cors import CORS
 from dotenv import load_dotenv
 import os
 
-from routes.main import main_routes
-from routes.admin import admin_routes
-
 load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
 
+from routes.admin import admin_routes
+from routes.main import register_main_routes
+
 # Register routes
-app.register_blueprint(main_routes)
+app.register_blueprint(register_main_routes)
 app.register_blueprint(admin_routes)
 
 if __name__ == "__main__":
