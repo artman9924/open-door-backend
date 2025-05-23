@@ -1,4 +1,6 @@
-from flask import Flask
+from flask import Flask, request
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 from flask_cors import CORS
 from dotenv import load_dotenv
 import os
@@ -27,3 +29,9 @@ if __name__ == "__main__":
         add_flagged_column()
 
     app.run(debug=True)
+
+limiter = Limiter(
+    get_remote_address,
+    app=app,
+    default_limits=["1 per 30 seconds"]
+)

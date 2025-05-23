@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from db import get_db_connection
 from analysis import analyze_emotion, MODERATION_KEYWORDS
+from app import app, limiter
 
 main_routes = Blueprint("main", __name__)
 
@@ -12,6 +13,7 @@ def get_messages():
     return jsonify([dict(msg) for msg in messages])
 
 @main_routes.route("/post-message", methods=["POST"])
+@limiter.limit("1 per 30 seconds")
 def post_message():
     data = request.get_json()
     message = data.get("content", "").strip()
