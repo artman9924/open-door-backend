@@ -14,8 +14,9 @@ from routes.admin import admin_routes
 from routes.main import register_main_routes
 
 # Register routes
-app.register_blueprint(register_main_routes)
+# app.register_blueprint(register_main_routes)
 app.register_blueprint(admin_routes)
+register_main_routes(app, limiter)
 
 if __name__ == "__main__":
     from db import init_db, add_flagged_column
