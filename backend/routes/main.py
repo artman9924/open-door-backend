@@ -3,7 +3,6 @@ from db import get_db_connection
 from analysis import analyze_emotion, MODERATION_KEYWORDS
 # from app import app, limiter
 
-
 main_routes = Blueprint('main_routes', __name__)
 
 def register_main_routes(app, limiter):
@@ -32,11 +31,11 @@ def register_main_routes(app, limiter):
         except Exception:
             return jsonify({"error": "Server error occurred"}), 500
 
-    app.register_blueprint(main_routes)
+    @main_routes.route("/get-messages", methods=["GET"])
+    def get_messages():
+        conn = get_db_connection()
+        messages = conn.execute('SELECT * FROM messages ORDER BY timestamp DESC').fetchall()
+        conn.close()
+        return jsonify([dict(msg) for msg in messages])
 
-@main_routes.route("/get-messages", methods=["GET"])
-def get_messages():
-    conn = get_db_connection()
-    messages = conn.execute('SELECT * FROM messages ORDER BY timestamp DESC').fetchall()
-    conn.close()
-    return jsonify([dict(msg) for msg in messages])
+    app.register_blueprint(main_routes)

@@ -16,7 +16,7 @@ from routes.main import register_main_routes
 limiter = Limiter(
     get_remote_address,
     app=app,
-    default_limits=["1 per 30 seconds"]
+    # default_limits=["1 per 30 seconds"]
 )
 
 # Register routes
